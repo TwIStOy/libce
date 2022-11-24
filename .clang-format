@@ -1,0 +1,30 @@
+---
+BasedOnStyle: Google
+IndentWidth: 2
+---
+Language: Cpp
+AlwaysBreakTemplateDeclarations: true
+SpaceAfterTemplateKeyword: false
+DerivePointerAlignment: false
+PointerAlignment: Right
+UseTab: Never
+AlignConsecutiveMacros: true
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+AlignConsecutiveAssignments: true
+BreakBeforeConceptDeclarations: true
+RequiresClausePosition: OwnLine
+IndentRequiresClause: true
+# RequiresExpressionIndentation: OuterScope
+InsertBraces: true
+ReferenceAlignment: Left
+IncludeBlocks: Preserve
+SeparateDefinitionBlocks: Always
+AlwaysBreakAfterReturnType: None
+---
+Language: Proto
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AllowShortFunctionsOnASingleLine: None
