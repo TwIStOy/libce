@@ -8,6 +8,7 @@
 
 namespace ce {
 
+  /*
 template<typename T>
 inline T sync_wait(Task<T> t) {
   event_loop loop;
@@ -18,5 +19,6 @@ inline T sync_wait(Task<T> t) {
 
   loop.run();
 }
+*/
 
 }  // namespace ce

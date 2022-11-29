@@ -68,21 +68,21 @@ struct _awaiter {
 }  // namespace _task_impl
 
 template<typename T>
-class Task {
+class task {
  public:
   using promise_type = _task_impl::promise<T>;
 
-  ~Task() {
+  ~task() {
     if (handle_) {
       handle_.destroy();
     }
   }
 
-  Task(Task&& other) noexcept : handle_(other.handle_) {
+  task(task&& other) noexcept : handle_(other.handle_) {
     other.handle_ = nullptr;
   }
 
-  Task& operator=(Task&& other) noexcept {
+  task& operator=(task&& other) noexcept {
     if (handle_) {
       handle_.destroy();
     }
@@ -90,10 +90,14 @@ class Task {
     other.handle_ = nullptr;
   }
 
+  std::coroutine_handle<promise_type> get_native_handle() noexcept {
+    return handle_;
+  }
+
  private:
   friend promise_type;
 
-  explicit Task(std::coroutine_handle<promise_type> handle) noexcept
+  explicit task(std::coroutine_handle<promise_type> handle) noexcept
       : handle_(handle) {
   }
 
@@ -101,7 +105,7 @@ class Task {
   using _awaiter = _task_impl::_awaiter<promise_type, OtherPromise>;
 
   friend auto tag_invoke(tag_t<await_transform>, auto& rhs_promise,
-                         Task&& t) noexcept {
+                         task&& t) noexcept {
     return _awaiter<CE_TYPEOF(rhs_promise)>{std::exchange(t.handle_, {})};
   }
 

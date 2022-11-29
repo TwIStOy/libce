@@ -5,6 +5,7 @@
 
 #include <coroutine>
 #include <exception>
+#include <iostream>
 #include <optional>
 #include <utility>
 #include <variant>
@@ -66,6 +67,7 @@ struct promise_base {
 template<typename T>
 struct _return_function_base {
   void return_value(auto&& value) noexcept {
+    std::cout << "return_value: " << value << std::endl;
     value_.template emplace<1>(CE_FWD(value));
   }
 
@@ -75,6 +77,8 @@ struct _return_function_base {
 template<>
 struct _return_function_base<void> {
   void return_void() noexcept {
+    std::cout << "return_void" << std::endl;
+
     value_.template emplace<1>();
   }
 
@@ -106,8 +110,8 @@ struct promise : public promise_base, _return_function_base<T> {
     return final_awaiter{};
   }
 
-  Task<T> get_return_object() noexcept {
-    return Task<T>{std::coroutine_handle<promise>::from_promise(*this)};
+  task<T> get_return_object() noexcept {
+    return task<T>{std::coroutine_handle<promise>::from_promise(*this)};
   }
 
   auto await_transform(auto&& value) noexcept(

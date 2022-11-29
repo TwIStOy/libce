@@ -5,8 +5,8 @@
 
 #include <ce/concepts/awaiter_traits.hh>
 #include <ce/concepts/is_coroutine_handle.hh>
-#include <ce/impls/task.hh>
 #include <ce/impls/helpers/sync_wait.hh>
+#include <ce/impls/task.hh>
 
 namespace ce::testing {
 
@@ -38,26 +38,25 @@ TEST_CASE("awaiter type", "[traits]") {
 TEST_CASE("do not exec before await", "[execute][task]") {
   bool started = false;
 
-  auto func = [&]() -> Task<int> {
+  auto func = [&]() -> task<int> {
     std::cout << "func exec" << std::endl;
     started = true;
     co_return 10;
   };
 
-  /*
-  auto v = ht::sync_wait([&]() -> ht::task<int> {
-    std::cout << "task exec" << std::endl;
-    auto t = func();
+  std::cout << "before construct" << std::endl;
+  auto t = func();
+  REQUIRE_FALSE(started);
 
-    REQUIRE(!started);
-    int x = (co_await t) * 2;
-    REQUIRE(started);
+  auto c = t.get_native_handle();
+  std::cout << "before run" << std::endl;
+  c.resume();
+  std::cout << "after run" << std::endl;
+  auto x = c.promise().result();
+  std::cout << "after get result" << std::endl;
 
-    co_return x;
-  }());
-
-  REQUIRE(v == 20);
-  */
+  REQUIRE(started);
+  REQUIRE(x == 10);
 }
 
 }  // namespace ce::testing

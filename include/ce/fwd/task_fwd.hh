@@ -6,6 +6,6 @@
 namespace ce {
 
 template<typename T>
-class Task;
+class task;
 
 }  // namespace ce
