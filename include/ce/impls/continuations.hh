@@ -5,9 +5,8 @@
 
 #include <coroutine>
 
+#include <ce/base/tag_invoke.hh>
 #include <ce/fwd/continuations_fwd.hh>
-#include <ce/impls/tag_invoke.hh>
-#include <ce/impls/type_index.hh>
 #include <typeindex>
 #include <utility>
 

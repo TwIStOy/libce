@@ -4,19 +4,24 @@
 #pragma once  // NOLINT(build/header_guard)
 
 #include <concepts>
+#include <coroutine>
 #include <type_traits>
 
 #include <ce/concepts/has_operator_co_await.hh>
 
-namespace ce {
+namespace ce::concepts {
 
 template<typename T>
-  requires has_operator_co_await<T> && requires(T obj) {
-                                         {
-                                           obj.await_ready()
-                                           } -> std::convertible_to<bool>;
-                                         { obj.await_resume() };
-                                       }
-using await_result_t = decltype(std::declval<T>().await_resume());
+concept awaitable = has_operator_co_await<T>;
 
-}  // namespace ce
+template<typename T>
+concept awaiter = requires(T t) {
+                    { t.await_ready() } -> std::convertible_to<bool>;
+                    { t.await_suspend(std::coroutine_handle<>{}) };
+                    { t.await_resume() };
+                  };
+
+template<awaiter T>
+using awaiter_result_t = decltype(std::declval<T>().await_resume());
+
+}  // namespace ce::concepts

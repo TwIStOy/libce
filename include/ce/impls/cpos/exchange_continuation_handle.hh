@@ -3,8 +3,8 @@
 
 #pragma once  // NOLINT(build/header_guard)
 
+#include <ce/base/tag_invoke.hh>
 #include <ce/impls/continuations.hh>
-#include <ce/impls/tag_invoke.hh>
 
 namespace ce {
 

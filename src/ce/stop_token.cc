@@ -5,7 +5,7 @@
 
 #include <cstdio>
 
-#include <ce/impls/assert.hh>
+#include <ce/base/assert.hh>
 #include <thread>
 
 namespace ce {

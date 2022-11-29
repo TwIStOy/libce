@@ -5,8 +5,8 @@
 
 #include <coroutine>
 
+#include <ce/base/assert.hh>
 #include <ce/fwd/task_fwd.hh>
-#include <ce/impls/assert.hh>
 #include <ce/impls/cpos/get_stop_token.hh>
 #include <ce/impls/task_promise.hh>
 #include <stop_token>

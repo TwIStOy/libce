@@ -5,7 +5,7 @@
 
 #include <stop_token>
 
-#include <ce/impls/tag_invoke.hh>
+#include <ce/base/tag_invoke.hh>
 
 namespace ce {
 

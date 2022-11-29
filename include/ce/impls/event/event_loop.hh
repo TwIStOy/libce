@@ -5,9 +5,11 @@
 
 #include <event.h>
 
+#include <chrono>
 #include <cstdint>
 
 #include <ce/config.h>
+#include <ce/impls/event_deleter.hh>
 
 namespace ce {
 
@@ -17,13 +19,18 @@ class EventLoop {
 
   handle_id_t get_next_handle_id();
 
+  ::event_base *get_native_base();
+
+  int run();
+
+  event_util::EventPtr new_event(int fd, short events, event_callback_fn cb,
+                                 void *arg);
+
+  void active(::event *ev);
+
  private:
   ::event_base *base_;
   handle_id_t _next_handle_id = 0;
 };
-
-inline CE_ALWAYS_INLINE handle_id_t EventLoop::get_next_handle_id() {
-  return _next_handle_id++;
-}
 
 }  // namespace ce

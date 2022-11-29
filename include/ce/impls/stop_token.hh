@@ -7,8 +7,8 @@
 #include <optional>
 #include <thread>
 
+#include <ce/base/cppfeature.hh>
 #include <ce/fwd/stop_token_fwd.hh>
-#include <ce/impls/cppfeature.hh>
 
 namespace ce {
 
@@ -202,11 +202,11 @@ class stop_token_adapter {
   }
 
  private:
-  using stop_callback =
+  using stop_callback_t =
       stop_callback<forward_stop_request_to_inplace_stop_source>;
 
   stop_source source_;
-  [[no_unique_address]] std::optional<stop_callback> callback_;
+  [[no_unique_address]] std::optional<stop_callback_t> callback_;
 };
 
 template<>

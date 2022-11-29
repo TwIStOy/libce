@@ -7,7 +7,7 @@
 #include <source_location>
 
 #include <ce/config.h>
-#include <ce/impls/cppfeature.hh>
+#include <ce/base/cppfeature.hh>
 
 #ifdef CE_RUNTIME_ASSERTION
 

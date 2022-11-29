@@ -8,7 +8,7 @@
 #include <utility>
 
 #include <ce/config.h>
-#include <ce/impls/cppfeature.hh>
+#include <ce/base/cppfeature.hh>
 
 namespace ce::_tag_invoke_cpo {
 

@@ -3,7 +3,7 @@
 
 #pragma once  // NOLINT(build/header_guard)
 
-namespace ce {
+namespace ce::concepts {
 
 namespace _has_operator_co_await_impl {
 
@@ -24,4 +24,4 @@ concept has_operator_co_await =
     _has_operator_co_await_impl::has_member_operaor_co_await<T> ||
     _has_operator_co_await_impl::has_free_operaor_co_await<T>;
 
-}  // namespace ce
+}  // namespace ce::concepts
