@@ -9,13 +9,15 @@
 #include <cstdint>
 
 #include <ce/config.h>
-#include <ce/impls/event_deleter.hh>
+#include <ce/impls/event/event_deleter.hh>
 
 namespace ce {
 
-class EventLoop {
+class event_loop {
  public:
-  EventLoop();
+  static void enable_multithread();
+
+  event_loop();
 
   handle_id_t get_next_handle_id();
 
@@ -23,8 +25,8 @@ class EventLoop {
 
   int run();
 
-  event_util::EventPtr new_event(int fd, short events, event_callback_fn cb,
-                                 void *arg);
+  event_util::event_ptr new_event(int fd, short events, event_callback_fn cb,
+                                  void *arg);
 
   void active(::event *ev);
 

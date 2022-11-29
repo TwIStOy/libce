@@ -4,13 +4,15 @@
 #pragma once  // NOLINT(build/header_guard)
 
 #include <coroutine>
-
-#include <ce/base/assert.hh>
-#include <ce/fwd/task_fwd.hh>
-#include <ce/impls/cpos/get_stop_token.hh>
-#include <ce/impls/task_promise.hh>
 #include <stop_token>
 #include <utility>
+
+#include <ce/base/assert.hh>
+#include <ce/base/cppfeature.hh>
+#include <ce/fwd/task_fwd.hh>
+#include <ce/impls/cpos/get_stop_token.hh>
+#include <ce/impls/stop_token_adapter.hh>
+#include <ce/impls/task_promise.hh>
 
 namespace ce {
 
@@ -89,6 +91,8 @@ class Task {
   }
 
  private:
+  friend promise_type;
+
   explicit Task(std::coroutine_handle<promise_type> handle) noexcept
       : handle_(handle) {
   }
@@ -96,10 +100,9 @@ class Task {
   template<typename OtherPromise>
   using _awaiter = _task_impl::_awaiter<promise_type, OtherPromise>;
 
-  template<typename OtherPromise>
-  friend _awaiter<OtherPromise> tag_invoke(tag_t<await_transform>,
-                                           OtherPromise&, Task&& t) noexcept {
-    return _awaiter<OtherPromise>{std::exchange(t.handle_, {})};
+  friend auto tag_invoke(tag_t<await_transform>, auto& rhs_promise,
+                         Task&& t) noexcept {
+    return _awaiter<CE_TYPEOF(rhs_promise)>{std::exchange(t.handle_, {})};
   }
 
  private:

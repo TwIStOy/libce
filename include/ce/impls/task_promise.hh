@@ -15,6 +15,7 @@
 #include <ce/impls/cpos/await_transform.hh>
 #include <ce/impls/cpos/exchange_continuation_handle.hh>
 #include <ce/impls/cpos/get_stop_token.hh>
+#include <ce/impls/cpos/visit_continuation.hh>
 #include <ce/impls/stop_token.hh>
 
 namespace ce::_task_impl {
@@ -53,13 +54,10 @@ struct promise_base {
     return std::exchange(p.handle_, handle);
   }
 
-  /*
-  template <typename Func>
-  friend void
-  tag_invoke(tag_t<visit_continuations>, const _promise_base& p, Func&& func) {
-    visit_continuations(p.continuation_, (Func &&) func);
+  friend void tag_invoke(tag_t<visit_continuation>, const promise_base& p,
+                         auto&& func) {
+    visit_continuations(p.handle_, CE_FWD(func));
   }
-  */
 
   stop_token stoken_;
   continuation_handle<> handle_;
@@ -68,7 +66,7 @@ struct promise_base {
 template<typename T>
 struct _return_function_base {
   void return_value(auto&& value) noexcept {
-    value_.emplace<1>(CE_FWD(value));
+    value_.template emplace<1>(CE_FWD(value));
   }
 
   std::variant<std::monostate, T, std::exception_ptr> value_;
@@ -77,7 +75,7 @@ struct _return_function_base {
 template<>
 struct _return_function_base<void> {
   void return_void() noexcept {
-    value_.emplace<1>();
+    value_.template emplace<1>();
   }
 
   std::variant<std::monostate, std::monostate, std::exception_ptr> value_;
@@ -88,7 +86,7 @@ struct promise : public promise_base, _return_function_base<T> {
   using result_type = T;
 
   void unhandled_exception() noexcept {
-    this->value_.emplace<2>(std::current_exception());
+    this->value_.template emplace<2>(std::current_exception());
   }
 
   decltype(auto) result() {

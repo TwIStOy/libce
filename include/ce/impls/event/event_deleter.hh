@@ -9,7 +9,7 @@
 
 namespace ce::event_util {
 
-struct EventDeleter {
+struct event_deleter {
   void operator()(void *p) const noexcept {
     auto e = reinterpret_cast<struct ::event *>(p);
     ::event_del(e);
@@ -17,6 +17,6 @@ struct EventDeleter {
   }
 };
 
-using EventPtr = std::unique_ptr<::event, EventDeleter>;
+using event_ptr = std::unique_ptr<::event, event_deleter>;
 
 }  // namespace ce::event_util

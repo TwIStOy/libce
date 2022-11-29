@@ -26,8 +26,11 @@ struct _fn {
 };  // namespace ce::_tag_invoke_cpo
 
 namespace ce {
-
+namespace __tag_invoke_cpo {
 inline constexpr _tag_invoke_cpo::_fn tag_invoke;
+}  // namespace __tag_invoke_cpo
+
+using namespace __tag_invoke_cpo;
 
 template<auto& CPO>
 using tag_t = CE_TYPEOF(CPO);
