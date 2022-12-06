@@ -58,4 +58,18 @@ TEST_CASE("do not exec before await", "[execute][task]") {
   REQUIRE(v == 10);
 }
 
+TEST_CASE("lots of tasks", "[coroutine][task]") {
+  auto return_one = []() -> ce::task<int> {
+    co_return 1;
+  };
+
+  ce::sync_wait([](auto func) -> ce::task<> {
+    int sum = 0;
+    for (int i = 0; i < 1'000'000; ++i) {
+      sum += co_await func();
+    }
+    REQUIRE(sum == 1'000'000);
+  }(return_one));
+}
+
 }  // namespace ce::testing

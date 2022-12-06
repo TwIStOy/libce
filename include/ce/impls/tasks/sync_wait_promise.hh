@@ -56,6 +56,13 @@ struct _return_function_base {
     return sync_wait_promise_base::final_awaiter{};
   }
 
+  T&& result() {
+    if (this->value_.index() == 2) {
+      std::rethrow_exception(std::get<2>(this->value_));
+    }
+    return static_cast<T&&>(*std::get<1>(this->value_));
+  }
+
   std::variant<std::monostate, std::remove_reference_t<T> *, std::exception_ptr>
       value_;
 };
@@ -65,6 +72,12 @@ struct _return_function_base<void> {
   auto return_void() {
     value_.template emplace<1>();
     return sync_wait_promise_base::final_awaiter{};
+  }
+
+  void result() {
+    if (this->value_.index() == 2) {
+      std::rethrow_exception(std::get<2>(this->value_));
+    }
   }
 
   std::variant<std::monostate, std::monostate, std::exception_ptr> value_;
@@ -94,13 +107,6 @@ struct sync_wait_promise : _sync_wait_impl::sync_wait_promise_base,
 
   void unhandled_exception() {
     this->value_.template emplace<2>(std::current_exception());
-  }
-
-  T&& result() {
-    if (this->value_.index() == 2) {
-      std::rethrow_exception(std::get<2>(this->value_));
-    }
-    return static_cast<T&&>(*std::get<1>(this->value_));
   }
 
   auto await_transform(auto&& value) {

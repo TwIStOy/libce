@@ -69,7 +69,7 @@ struct _awaiter {
 
 }  // namespace _task_impl
 
-template<typename T>
+template<typename T = void>
 class task {
  public:
   using promise_type = _task_impl::promise<T>;

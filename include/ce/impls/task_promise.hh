@@ -70,6 +70,13 @@ struct _return_function_base {
     value_.template emplace<1>(CE_FWD(value));
   }
 
+  decltype(auto) result() {
+    if (this->value_.index() == 2) {
+      std::rethrow_exception(std::get<2>(this->value_));
+    }
+    return std::get<1>(this->value_);
+  }
+
   std::variant<std::monostate, T, std::exception_ptr> value_;
 };
 
@@ -77,6 +84,12 @@ template<>
 struct _return_function_base<void> {
   void return_void() noexcept {
     value_.template emplace<1>();
+  }
+
+  void result() {
+    if (this->value_.index() == 2) {
+      std::rethrow_exception(std::get<2>(this->value_));
+    }
   }
 
   std::variant<std::monostate, std::monostate, std::exception_ptr> value_;
@@ -88,13 +101,6 @@ struct promise : public promise_base, _return_function_base<T> {
 
   void unhandled_exception() noexcept {
     this->value_.template emplace<2>(std::current_exception());
-  }
-
-  decltype(auto) result() {
-    if (this->value_.index() == 2) {
-      std::rethrow_exception(std::get<2>(this->value_));
-    }
-    return std::get<1>(this->value_);
   }
 
   [[nodiscard]] static inline constexpr auto final_suspend() noexcept {
