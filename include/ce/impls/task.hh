@@ -11,6 +11,7 @@
 #include <ce/base/cppfeature.hh>
 #include <ce/fwd/task_fwd.hh>
 #include <ce/impls/cpos/get_stop_token.hh>
+#include <ce/impls/cpos/visit_continuation.hh>
 #include <ce/impls/stop_token_adapter.hh>
 #include <ce/impls/task_promise.hh>
 
@@ -51,10 +52,11 @@ struct _awaiter {
   }
 
   result_type await_resume() {
-    // stopTokenAdapter_.unsubscribe();
     scope_guard defer{[this]() noexcept {
       std::exchange(coro_, {}).destroy();
     }};
+
+    stop_token_adapter_.unsubscribe();
     return coro_.promise().result();
   }
 
@@ -90,7 +92,7 @@ class task {
     other.handle_ = nullptr;
   }
 
-  std::coroutine_handle<promise_type> get_native_handle() noexcept {
+  auto get_native_handle() noexcept {
     return handle_;
   }
 

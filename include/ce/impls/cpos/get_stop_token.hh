@@ -6,6 +6,7 @@
 #include <stop_token>
 
 #include <ce/base/tag_invoke.hh>
+#include <ce/impls/stop_token.hh>
 
 namespace ce {
 
@@ -13,7 +14,7 @@ namespace _get_stop_token_cpo {
 
 struct _fn {
   template<typename P>
-  std::stop_token operator()(const P& p) const noexcept {
+  stop_token operator()(const P& p) const noexcept {
     return tag_invoke(_fn{}, p);
   }
 };

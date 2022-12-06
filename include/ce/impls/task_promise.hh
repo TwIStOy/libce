@@ -67,7 +67,6 @@ struct promise_base {
 template<typename T>
 struct _return_function_base {
   void return_value(auto&& value) noexcept {
-    std::cout << "return_value: " << value << std::endl;
     value_.template emplace<1>(CE_FWD(value));
   }
 
@@ -77,8 +76,6 @@ struct _return_function_base {
 template<>
 struct _return_function_base<void> {
   void return_void() noexcept {
-    std::cout << "return_void" << std::endl;
-
     value_.template emplace<1>();
   }
 

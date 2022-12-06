@@ -3,22 +3,21 @@
 
 #pragma once  // NOLINT(build/header_guard)
 
-#include <ce/impls/event/event_loop.hh>
-#include <ce/impls/task.hh>
+#include <thread>
+
+#include <ce/base/cppfeature.hh>
+#include <ce/impls/tasks/sync_wait.hh>
 
 namespace ce {
 
-  /*
-template<typename T>
-inline T sync_wait(Task<T> t) {
-  event_loop loop;
-
-  // TODO(hawtian):
-
-  // loop.new_event(-1, EV_READ, event_callback_fn cb, void *arg);
-
-  loop.run();
+auto sync_wait(auto&& t) {
+  auto tt               = make_sync_wait_task(CE_FWD(t));
+  std::atomic_bool done = false;
+  tt.start(&done);
+  while (!done) {
+    std::this_thread::yield();
+  }
+  return tt.result();
 }
-*/
 
 }  // namespace ce

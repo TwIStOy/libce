@@ -7,6 +7,7 @@
 
 #include <ce/base/tag_invoke.hh>
 #include <ce/fwd/continuations_fwd.hh>
+#include <functional>
 #include <typeindex>
 #include <utility>
 
@@ -15,8 +16,8 @@ namespace ce {
 namespace _continuation_handle_impl {
 
 struct continuation_handle_vtable {
-  using DoneCallback_t     = std::coroutine_handle<>(void *);
-  using PromiseTypeIndex_t = std::type_index();
+  using DoneCallback_t     = std::function<std::coroutine_handle<>(void *)>;
+  using PromiseTypeIndex_t = std::function<std::type_index()>;
 
   DoneCallback_t done_callback_;
   PromiseTypeIndex_t promise_type_index;
@@ -24,16 +25,16 @@ struct continuation_handle_vtable {
   template<typename Promise>
   static continuation_handle_vtable *vtable_for() {
     static continuation_handle_vtable _vtable{
-        .done_callback_ =
-            [](void *ptr) {
-              return std::coroutine_handle<Promise>::from_address(ptr)
-                  .promise()
-                  .unhandle_done();
-            },
+        .done_callback_ = [](void *ptr) -> std::coroutine_handle<> {
+          return std::coroutine_handle<Promise>::from_address(ptr)
+              .promise()
+              .unhandle_done();
+        },
         .promise_type_index =
             []() {
               return std::type_index(typeid(Promise));
-            }};
+            },
+    };
     return &_vtable;
   }
 };
